@@ -6,7 +6,7 @@
 # 環境構築
 
 ```
-docker-compose up
+docker-compose up -d
 ```
 
 # 開発の進め方
