@@ -9,6 +9,7 @@ services:
       - ./infra/local/php/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - postgres
+    container_name: blog-php
 
   nginx:
     build: ./infra/local/nginx
@@ -19,6 +20,7 @@ services:
       - ./infra/local/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - web
+    container_name: blog-nginx
     # restart: always
 
   postgres:
@@ -35,3 +37,4 @@ services:
     volumes:
       - ./infra/local/postgres/data:/var/lib/postgresql/data
       - ./infra/local/postgres/logs:/var/log
+    container_name: blog-db
