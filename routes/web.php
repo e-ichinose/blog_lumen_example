@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 /** @var \Laravel\Lumen\Routing\Router $router */
@@ -19,4 +21,5 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/api/user/register', 'UserController@index');
+
+$router->post('/api/user/register', 'AuthController@register');
