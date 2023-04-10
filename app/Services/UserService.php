@@ -7,19 +7,34 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function createUser(array $input)
+    /**
+     * ユーザー 登録
+     * @param string $username
+     * @param string $email
+     * @param string $password
+     * @return \App\Models\User
+     */
+    public function createUser($username, $email, $password)
     {
-        $hashedPassword = Hash::make($input['password']);
+        $hashedPassword = Hash::make($password);
 
-        $user = new User;
-        $user->username = $input['username'];
-        $user->email    = $input['email'];
-        $user->password = $hashedPassword;
-        $user->save();
+        $user = new User();
+        $user->fill([
+            "username" => $username,
+            "email" => $email,
+            "password" => $hashedPassword,
+        ]);
+        $user->saveOrFail();
 
         return $user;
     }
 
+    /**
+     * 認証トークン発行
+     * @param string $email
+     * @param string $password
+     * @return string
+     */
     public function generateToken($email, $password)
     {
         $credentials = ['email' => $email, 'password' => $password];
