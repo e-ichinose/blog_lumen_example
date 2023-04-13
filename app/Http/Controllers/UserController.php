@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
     private $userService;
+    private $messages;
 
     /**
      * UserController constructor.
@@ -16,6 +18,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->userService = new UserService();
+        $this->messages = app("translator")->get("validation");
     }
 
     /**
@@ -64,6 +67,58 @@ class UserController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
+        }
+    }
+
+    /**
+     * ユーザの認証
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
+    {
+        $rules = [
+            "email" => ["required", "email", "max:255"],
+            "password" => ["required", "min:6", "max:255"],
+        ];
+
+        $this->validate($request, $rules, $this->messages);
+
+        try {
+            $token = $this->userService->generateToken(
+                $request["email"],
+                $request["password"]
+            );
+
+            if (!$token) {
+                return response()->json([
+                    "message" => "ユーザー認証に失敗しました",
+                    "code" => 401,
+                    "data" => null,
+                ]);
+            }
+
+            $user = auth()->user();
+
+            $data = [
+                "id" => $user->id,
+                "username" => $user->username,
+                "token" => $token,
+            ];
+
+            return response()->json([
+                "message" => "",
+                "code" => 200,
+                "data" => $data,
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                "message" => "予期せぬエラーが発生しました",
+                "code" => 500,
+                "data" => null,
+            ]);
         }
     }
 }
