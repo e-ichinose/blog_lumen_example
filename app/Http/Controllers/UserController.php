@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     private $userService;
+    private $messages;
 
     /**
      * UserController constructor.
@@ -17,6 +18,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->userService = new UserService();
+        $this->messages = app("translator")->get("validation");
     }
 
     /**
@@ -76,25 +78,28 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $this->validate($request, [
-            'email'    => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
-        ],[
-            'email.required'    => 'メールアドレスは必須です',
-            'email.email'       => '有効なメールアドレスを入力してください',
-            'password.required' => 'パスワードは必須です',
-            'password.min'      => 'パスワードは6文字以上で入力してください',
-        ]);
+        $rules = [
+            "email" => ["required", "email", "max:255"],
+            "password" => ["required", "min:6", "max:255"],
+        ];
 
-        $credentials = $request->only('email', 'password');
-        if (auth()->attempt($credentials)) {
-            // 認証成功
-            $user = auth()->user();
+        $this->validate($request, $rules, $this->messages);
 
+        try {
             $token = $this->userService->generateToken(
-                $credentials["email"],
-                $credentials["password"]
+                $request["email"],
+                $request["password"]
             );
+
+            if (!$token) {
+                return response()->json([
+                    "message" => "ユーザー認証に失敗しました",
+                    "code" => 401,
+                    "data" => null,
+                ]);
+            }
+
+            $user = auth()->user();
 
             $data = [
                 "id" => $user->id,
@@ -107,11 +112,11 @@ class UserController extends Controller
                 "code" => 200,
                 "data" => $data,
             ]);
-        } else {
-            // 認証失敗
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                "message" => "ユーザー認証に失敗しました",
-                "code" => 401,
+                "message" => "予期せぬエラーが発生しました",
+                "code" => 500,
                 "data" => null,
             ]);
         }
