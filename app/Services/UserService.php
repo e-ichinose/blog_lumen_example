@@ -82,7 +82,7 @@ class UserService
                     $newToken = JWTAuth::refresh($token);
 
                     return [
-                        "message" => "トークンが更新されました",
+                        "message" => "",
                         "code" => Response::HTTP_OK,
                         "data" => ["token" => $newToken],
                     ];
@@ -95,16 +95,8 @@ class UserService
                 }
             }
 
-            $newToken = JWTAuth::refresh($token);
-
             return [
-                "message" => "トークンが更新されました",
-                "code" => Response::HTTP_OK,
-                "data" => ["token" => $newToken],
-            ];
-
-            return [
-                "message" => "有効なトークン",
+                "message" => "",
                 "code" => Response::HTTP_OK,
                 "data" => null,
             ];
