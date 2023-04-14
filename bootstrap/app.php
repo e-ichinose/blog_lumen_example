@@ -78,6 +78,7 @@ $app->configure('app');
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'token.refresh' => App\Http\Middleware\TokenRefreshMiddleware::class,
 ]);
 
 /*

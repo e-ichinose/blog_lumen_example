@@ -12,10 +12,12 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+// ユーザー新規登録
+$router->post("/api/user/register", "UserController@register");
+
+// ユーザー認証
+$router->post("/api/user/login", "UserController@login");
+
+$router->group(["middleware" => "token.refresh"], function () use ($router) {
+    // 認証が必要なAPIのroute定義
 });
-
-$router->post('/api/user/register', 'UserController@register');
-
-$router->post('/api/user/login', 'UserController@login');
