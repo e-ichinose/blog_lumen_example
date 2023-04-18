@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Services\ArticleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Json\CommonJson;
+
 
 class ArticleController extends Controller
 {
@@ -43,25 +45,23 @@ class ArticleController extends Controller
         try {
             DB::beginTransaction();
 
-            $article = $this->articleService->createArticle(
+            $result = $this->articleService->createArticle(
                 $input["title"],
                 $input["text"]
             );
 
-            $data = [
-                "user_id" => $article->user_id,
-                "title" => $article->title,
-                "text" => $article->text
-            ];
+            if(! $result) {
+                return $this->articleError("記事の投稿に失敗しました");
+            }
 
             DB::commit();
 
-            return response()->json($this->success("投稿しました", $data));
+            return $this->success();
 
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json($this->serverError());
-            // throw $e; 要るのか
+            Log::error($e->getMessage());
+            return $this->serverError();
         }
     }
 }

@@ -23,4 +23,13 @@ trait CommonJson
             'data'  => null,
         ];
     }
+
+    private function articleError($message = '', $items = null): array
+    {
+        return [
+            'message' => $message,
+            'code'    => 400,
+            'data'  => $items,
+        ];
+    }
 }

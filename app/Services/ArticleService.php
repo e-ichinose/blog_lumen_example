@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
+use App\Http\Json\CommonJson;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleService
 {
+    use CommonJson;
+
     /**
      * 記事 登録
-     * @param string $token
      * @param string $title
      * @param string $text
-     * @return \App\Models\Article
+     * @return boolean
      */
     public function createArticle($title, $text)
     {
@@ -20,6 +22,10 @@ class ArticleService
 
         $user = Auth::user();
         $user_id = $user ? $user->id : null;
+
+        if(empty($user_id)) {
+            return false;
+        }
 
         $article->fill([
             "user_id" => $user_id,
@@ -29,6 +35,6 @@ class ArticleService
 
         $article->saveOrFail();
 
-        return $article;
+        return true;
     }
 }

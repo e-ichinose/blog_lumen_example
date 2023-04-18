@@ -62,7 +62,7 @@ class UserController extends Controller
 
             DB::commit();
 
-            return response()->json($this->success("", $data));
+            return $this->success("", $data);
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -107,11 +107,11 @@ class UserController extends Controller
                 "token" => $token,
             ];
 
-            return response()->json($this->success("", $data));
+            return $this->success("", $data);
 
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return response()->json($this->serverError());
+            return $this->serverError();
         }
     }
 }
