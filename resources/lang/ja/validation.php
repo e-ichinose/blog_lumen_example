@@ -14,5 +14,7 @@ return [
         "username" => "ユーザ名",
         "email" => "メールアドレス",
         "password" => "パスワード",
+        "title" => "タイトル",
+        "text" => "本文",
     ],
 ];
