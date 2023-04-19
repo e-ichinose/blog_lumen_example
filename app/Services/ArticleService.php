@@ -21,14 +21,13 @@ class ArticleService
         $article = new Article();
 
         $user = Auth::user();
-        $user_id = $user ? $user->id : null;
 
-        if(empty($user_id)) {
+        if(empty($user)) {
             return false;
         }
 
         $article->fill([
-            "user_id" => $user_id,
+            "user_id" => $user->id,
             "title" => $title,
             "text" => $text,
         ]);

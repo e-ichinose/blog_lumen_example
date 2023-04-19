@@ -50,7 +50,7 @@ class ArticleController extends Controller
                 $input["text"]
             );
 
-            if(! $result) {
+            if(!$result) {
                 return $this->articleError("記事の投稿に失敗しました");
             }
 
