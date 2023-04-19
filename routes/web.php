@@ -18,6 +18,10 @@ $router->post("/api/user/register", "UserController@register");
 // ユーザー認証
 $router->post("/api/user/login", "UserController@login");
 
+
 $router->group(["middleware" => "token.refresh"], function () use ($router) {
     // 認証が必要なAPIのroute定義
+
+    // 記事投稿
+    $router->post("/api/article", "ArticleController@create");
 });

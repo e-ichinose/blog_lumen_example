@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Json\CommonJson;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    use CommonJson;
+
     private $userService;
     private $messages;
 
@@ -59,11 +62,8 @@ class UserController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                "message" => "",
-                "code" => 200,
-                "data" => $data,
-            ]);
+            return $this->success("", $data);
+
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
@@ -107,18 +107,11 @@ class UserController extends Controller
                 "token" => $token,
             ];
 
-            return response()->json([
-                "message" => "",
-                "code" => 200,
-                "data" => $data,
-            ]);
+            return $this->success("", $data);
+
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return response()->json([
-                "message" => "予期せぬエラーが発生しました",
-                "code" => 500,
-                "data" => null,
-            ]);
+            return $this->serverError();
         }
     }
 }
