@@ -64,4 +64,45 @@ class ArticleController extends Controller
             return $this->serverError();
         }
     }
+
+    /**
+     * 記事の更新
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $articleId)
+    {
+        $rules = [
+            "title" => ["required"],
+            "text" => ["required"],
+        ];
+
+        $this->validate($request, $rules, $this->messages);
+
+        $input = $request->all();
+
+        try {
+            DB::beginTransaction();
+
+            $result = $this->articleService->updateArticle(
+                $input["title"],
+                $input["text"],
+                $articleId
+            );
+
+            if($result !== true) {
+                return $result;
+            }
+
+            DB::commit();
+
+            return $this->success();
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage());
+            return $this->serverError();
+        }
+    }
 }

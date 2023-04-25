@@ -1,6 +1,10 @@
 <?php
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+use App\Http\Controllers\ArticleController;
+use Illuminate\Support\Facades\DB;
+
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -18,10 +22,12 @@ $router->post("/api/user/register", "UserController@register");
 // ユーザー認証
 $router->post("/api/user/login", "UserController@login");
 
-
 $router->group(["middleware" => "token.refresh"], function () use ($router) {
     // 認証が必要なAPIのroute定義
 
     // 記事投稿
     $router->post("/api/article", "ArticleController@create");
+
+    // 記事更新
+    $router->post("/api/article/update/{articleId}", "ArticleController@update");
 });
