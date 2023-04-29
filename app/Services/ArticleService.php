@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Http\Json\CommonJson;
 use App\Models\Article;
-use App\Models\User;
+use App\Exceptions\ArticleException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class ArticleService
 {
@@ -15,58 +17,57 @@ class ArticleService
      * 記事 登録
      * @param string $title
      * @param string $text
-     * @return boolean
+     * @throws ArticleException
      */
     public function createArticle($title, $text)
     {
-        $article = new Article();
+        DB::transaction(function () use ($title, $text) {
+            $article = new Article();
 
-        $user = Auth::user();
+            $user = Auth::user();
 
-        if(empty($user)) {
-            return false;
-        }
+            if(empty($user)) {
+              throw new ArticleException('ユーザーが存在しません');
+            }
 
-        $article->fill([
-            "user_id" => $user->id,
-            "title" => $title,
-            "text" => $text,
-        ]);
+            $article->fill([
+                "user_id" => $user->id,
+                "title" => $title,
+                "text" => $text,
+            ]);
 
-        $article->saveOrFail();
-
-        return true;
+            $article->saveOrFail();
+        });
     }
 
     /**
      * 記事 更新
      * @param string $title
      * @param string $text
-     * @return boolean
+     * @param int $articleId
+     * @throws ArticleException
      */
     public function updateArticle($title, $text, $articleId)
     {
-        $user = Auth::user();
+        DB::transaction(function () use ($title, $text, $articleId) {
+            $user = Auth::user();
 
-        if(!User::find($user->id)) {
-            return $this->articleError("ユーザーIDが存在しません");
-        }
+            if(empty($user)) {
+              throw new ArticleException('ユーザーが存在しません');
+            }
 
-        if(!$article = Article::find($articleId)) {
-            return $this->articleError("記事が存在しません");
-        }
+            $articleModel = new Article();
 
-        if ($article->user_id != $user->id) {
-            return $this->articleError("更新の権限がありません");
-        }
+            $article = $articleModel->findById($articleId);
 
-        $article->fill([
-            "title" => $title,
-            "text" => $text,
-        ]);
+            if ($article->user_id != $user->id) {
+              throw new ArticleException('更新の権限がありません');
+            }
 
-        $article->saveOrFail();
-
-        return true;
+            $article->update([
+                "title" => $title,
+                "text" => $text,
+            ]);
+        });
     }
 }
