@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Exceptions\ArticleException;
 
 class Article extends Model
 {
@@ -18,4 +19,17 @@ class Article extends Model
      */
     protected $fillable = ["user_id", "title", "text"];
 
+    /**
+     * 特定記事の取得
+     * @param $agencyId
+     * @return Article
+     */
+    public function findById($articleId): Article
+    {
+        $article = self::find($articleId);
+        if (is_null($article)) {
+            throw new ArticleException('記事が存在しません');
+        }
+        return $article;
+    }
 }
