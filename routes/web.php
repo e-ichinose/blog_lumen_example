@@ -1,10 +1,6 @@
 <?php
 /** @var \Laravel\Lumen\Routing\Router $router */
 
-use App\Http\Controllers\ArticleController;
-use Illuminate\Support\Facades\DB;
-
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes

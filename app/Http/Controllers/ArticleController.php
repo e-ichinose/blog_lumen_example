@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\ArticleService;
+use App\Exceptions\ArticleException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Json\CommonJson;
 
@@ -43,26 +43,20 @@ class ArticleController extends Controller
         $input = $request->all();
 
         try {
-            DB::beginTransaction();
-
-            $result = $this->articleService->createArticle(
+            $this->articleService->createArticle(
                 $input["title"],
                 $input["text"]
             );
 
-            if(!$result) {
-                return $this->articleError("記事の投稿に失敗しました");
-            }
-
-            DB::commit();
-
             return $this->success();
 
-        } catch (\Exception $e) {
-            DB::rollback();
+          } catch(ArticleException $e) {
+            Log::error($e->getMessage());
+            return $this->articleError($e->getMessage());
+          } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->serverError();
-        }
+          }
     }
 
     /**
@@ -83,24 +77,17 @@ class ArticleController extends Controller
         $input = $request->all();
 
         try {
-            DB::beginTransaction();
-
-            $result = $this->articleService->updateArticle(
+            $this->articleService->updateArticle(
                 $input["title"],
                 $input["text"],
                 $articleId
             );
 
-            if($result !== true) {
-                return $result;
-            }
-
-            DB::commit();
-
             return $this->success();
-
+        } catch(ArticleException $e) {
+            Log::error($e->getMessage());
+            return $this->articleError($e->getMessage());
         } catch (\Exception $e) {
-            DB::rollback();
             Log::error($e->getMessage());
             return $this->serverError();
         }
