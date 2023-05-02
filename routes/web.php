@@ -26,4 +26,7 @@ $router->group(["middleware" => "token.refresh"], function () use ($router) {
 
     // 記事更新
     $router->post("/api/article/update/{articleId}", "ArticleController@update");
+
+    // 記事削除
+    $router->delete("/api/article/delete/{articleId}", "ArticleController@delete");
 });

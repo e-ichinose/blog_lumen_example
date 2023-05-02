@@ -27,7 +27,7 @@ class ArticleService
             $user = Auth::user();
 
             if(empty($user)) {
-              throw new ArticleException('ユーザーが存在しません');
+                throw new ArticleException('ユーザーが存在しません');
             }
 
             $article->fill([
@@ -53,7 +53,7 @@ class ArticleService
             $user = Auth::user();
 
             if(empty($user)) {
-              throw new ArticleException('ユーザーが存在しません');
+                throw new ArticleException('ユーザーが存在しません');
             }
 
             $articleModel = new Article();
@@ -61,13 +61,39 @@ class ArticleService
             $article = $articleModel->findById($articleId);
 
             if ($article->user_id != $user->id) {
-              throw new ArticleException('更新の権限がありません');
+                throw new ArticleException('更新の権限がありません');
             }
 
             $article->update([
                 "title" => $title,
                 "text" => $text,
             ]);
+        });
+    }
+
+    /**
+     * 記事 削除
+     * @param int $articleId
+     * @throws ArticleException
+     */
+    public function deleteArticle($articleId)
+    {
+        DB::transaction(function () use ($articleId) {
+            $user = Auth::user();
+
+            if(empty($user)) {
+                throw new ArticleException('ユーザーが存在しません');
+            }
+
+            $articleModel = new Article();
+
+            $article = $articleModel->findById($articleId);
+
+            if ($article->user_id != $user->id) {
+                throw new ArticleException('削除の権限がありません');
+            }
+
+            $article->delete();
         });
     }
 }
