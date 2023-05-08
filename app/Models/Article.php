@@ -23,6 +23,7 @@ class Article extends Model
      * 特定記事の取得
      * @param $agencyId
      * @return Article
+     * @throws ArticleException
      */
     public function findById($articleId): Article
     {

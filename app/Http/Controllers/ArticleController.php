@@ -50,13 +50,13 @@ class ArticleController extends Controller
 
             return $this->success();
 
-          } catch(ArticleException $e) {
+        } catch(ArticleException $e) {
             Log::error($e->getMessage());
             return $this->articleError($e->getMessage());
-          } catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->serverError();
-          }
+        }
     }
 
     /**
@@ -83,6 +83,26 @@ class ArticleController extends Controller
                 $articleId
             );
 
+            return $this->success();
+        } catch(ArticleException $e) {
+            Log::error($e->getMessage());
+            return $this->articleError($e->getMessage());
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->serverError();
+        }
+    }
+
+    /**
+     * 記事の削除
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete($articleId)
+    {
+        try {
+            $this->articleService->deleteArticle($articleId);
             return $this->success();
         } catch(ArticleException $e) {
             Log::error($e->getMessage());
