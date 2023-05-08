@@ -96,4 +96,13 @@ class ArticleService
             $article->delete();
         });
     }
+
+    /**
+     * 記事一覧 取得
+     */
+    public function getArticles()
+    {
+        $articles = Article::all();
+        return response()->json($articles);
+    }
 }

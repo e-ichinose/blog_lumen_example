@@ -112,4 +112,20 @@ class ArticleController extends Controller
             return $this->serverError();
         }
     }
+
+    /**
+     * 記事一覧の取得
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        try {
+            $articles = $this->articleService->getArticles();
+            return $articles;
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->serverError();
+        }
+    }
 }
