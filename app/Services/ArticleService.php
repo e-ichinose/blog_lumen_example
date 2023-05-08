@@ -60,7 +60,7 @@ class ArticleService
 
             $article = $articleModel->findById($articleId);
 
-            if ($article->user_id != $user->id) {
+            if ((int) $article->user_id !== $user->id) {
                 throw new ArticleException('更新の権限がありません');
             }
 
@@ -89,7 +89,7 @@ class ArticleService
 
             $article = $articleModel->findById($articleId);
 
-            if ($article->user_id != $user->id) {
+            if ((int) $article->user_id !== $user->id) {
                 throw new ArticleException('削除の権限がありません');
             }
 
