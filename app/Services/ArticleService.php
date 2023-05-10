@@ -99,10 +99,14 @@ class ArticleService
 
     /**
      * 記事一覧 取得
+     * 
+     * @param int $perPage
+     * @param array $conditions
+     * @return array
      */
-    public function getArticles()
+    public function fetchArticleList(int $perPage, $conditions = []): array
     {
-        $articles = Article::all();
-        return response()->json($articles);
+      $article = new Article();
+      return $article->findByQuery($perPage, $conditions);
     }
 }

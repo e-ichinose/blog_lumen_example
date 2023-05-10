@@ -31,5 +31,5 @@ $router->group(["middleware" => "token.refresh"], function () use ($router) {
     $router->delete("/api/article/delete/{articleId}", "ArticleController@delete");
 
     // 記事一覧取得
-    $router->get("/api/article/list", "ArticleController@index");
+    $router->get("/api/article", "ArticleController@index");
 });

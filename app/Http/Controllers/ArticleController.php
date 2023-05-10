@@ -26,6 +26,39 @@ class ArticleController extends Controller
     }
 
     /**
+     * 記事一覧の取得
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
+    {
+        try {
+            $rules = [
+                "article_id" => ["integer"],
+                "user_id" => ["string"],
+                "title" => ["string"],
+                "text" => ["string"],
+            ];
+            $this->validate($request, $rules, $this->messages);
+
+            $perPage = $request->get('per_page', 50);
+            $conditions = $request->only([
+                "article_id",
+                "user_id",
+                "title",
+                "text",
+            ]);
+
+            $articles = $this->articleService->fetchArticleList($perPage, $conditions);
+            return $this->success('', $articles);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->serverError();
+        }
+    }
+
+    /**
      * 記事の投稿
      *
      * @param  Request $request
@@ -107,22 +140,6 @@ class ArticleController extends Controller
         } catch(ArticleException $e) {
             Log::error($e->getMessage());
             return $this->articleError($e->getMessage());
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return $this->serverError();
-        }
-    }
-
-    /**
-     * 記事一覧の取得
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
-    {
-        try {
-            $articles = $this->articleService->getArticles();
-            return $articles;
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->serverError();
