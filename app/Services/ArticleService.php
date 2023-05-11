@@ -96,4 +96,17 @@ class ArticleService
             $article->delete();
         });
     }
+
+    /**
+     * 記事一覧 取得
+     * 
+     * @param int $perPage
+     * @param array $conditions
+     * @return array
+     */
+    public function fetchArticleList(int $perPage, $conditions = []): array
+    {
+      $article = new Article();
+      return $article->findByQuery($perPage, $conditions);
+    }
 }
