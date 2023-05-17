@@ -12,24 +12,27 @@
 |
 */
 
-// ユーザー新規登録
-$router->post("/api/user/register", "UserController@register");
+$router->group(['middleware' => 'cors'], function ($router) {
 
-// ユーザー認証
-$router->post("/api/user/login", "UserController@login");
+  // ユーザー新規登録
+  $router->post("/api/user/register", "UserController@register");
 
-$router->group(["middleware" => "token.refresh"], function () use ($router) {
-    // 認証が必要なAPIのroute定義
+  // ユーザー認証
+  $router->post("/api/user/login", "UserController@login");
 
-    // 記事投稿
-    $router->post("/api/article", "ArticleController@create");
+  $router->group(["middleware" => "token.refresh"], function () use ($router) {
+      // 認証が必要なAPIのroute定義
 
-    // 記事更新
-    $router->post("/api/article/update/{articleId}", "ArticleController@update");
+      // 記事投稿
+      $router->post("/api/article", "ArticleController@create");
 
-    // 記事削除
-    $router->delete("/api/article/delete/{articleId}", "ArticleController@delete");
+      // 記事更新
+      $router->post("/api/article/update/{articleId}", "ArticleController@update");
 
-    // 記事一覧取得
-    $router->get("/api/article", "ArticleController@index");
+      // 記事削除
+      $router->delete("/api/article/delete/{articleId}", "ArticleController@delete");
+
+      // 記事一覧取得
+      $router->get("/api/article", "ArticleController@index");
+  });
 });
