@@ -15,8 +15,11 @@
 // ユーザー新規登録
 $router->post("/api/user/register", "UserController@register");
 
-// ユーザー認証
+// ユーザーログイン
 $router->post("/api/user/login", "UserController@login");
+
+// ユーザー認証
+$router->get("/api/user/me", "UserController@me");
 
 $router->group(["middleware" => "token.refresh"], function () use ($router) {
     // 認証が必要なAPIのroute定義
