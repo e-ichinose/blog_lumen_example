@@ -25,7 +25,7 @@ class UserController extends Controller
     }
 
     /**
-     * ユーザの登録
+     * ユーザーの登録
      *
      * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -71,7 +71,7 @@ class UserController extends Controller
     }
 
     /**
-     * ユーザの認証
+     * ユーザーのログイン
      *
      * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -109,6 +109,21 @@ class UserController extends Controller
 
             return $this->success("", $data);
 
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->serverError();
+        }
+    }
+
+    /**
+     * ユーザーの認証
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        try {
+            return auth()->user();
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->serverError();
